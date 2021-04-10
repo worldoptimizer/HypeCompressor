@@ -3,8 +3,7 @@ Hype Compressor v1.0.3, https://github.com/worldoptimizer/HypeCompressor/blob/ma
 */
 
 /*
- Hype Compressor v1.0.3, heavily based on JSX.Util.Unzip, 
- copyright (c) 2019-2021 Max Ziebell, (https://maxziebell.de).
+ Hype Compressor v1.0.3, copyright (c) 2019-2021 Max Ziebell, (https://maxziebell.de).
  HypeCompressor is modified by Max Ziebell for usage with Tuimult Hype 4, heavily based on JSX.Util.Unzip 
  by Matthias Ehmann, Michael Gerhaeuser, Carsten Miller, Bianca Valentin, Alfred Wassermann, Peter Wilfahrt, Pasi Ojala
  HypeCompressor is dual licensed under the Apache License Version 2.0, or LGPL Version 3 licenses.
