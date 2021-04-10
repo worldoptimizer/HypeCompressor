@@ -1,3 +1,50 @@
+All files are unter the MIT license (see below) 
+apart from the following files that use a different license:
+
+HypeCompressor.js
+HypeCompressor.min.js
+
+are free software dual licensed under the GNU LGPL or Apache License.
+
+You can redistribute it and/or modify it under the terms of the
+
+  * GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version
+  OR
+  * Apache License Version 2.0
+
+HypeCompressor is based on JSX.Util.Unzip and is distributed 
+in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE.  See the GNU Lesser General Public License 
+for more details.
+
+You should have received a copy of the GNU Lesser General Public License and
+the Apache License along with HypeCompressor. If not, see <http://www.gnu.org/licenses/>
+and <https://www.apache.org/licenses/LICENSE-2.0.html>.
+
+This product includes software developed at
+Lehrstuhl fuer Mathematik und ihre Didaktik
+University of Bayreuth, Germany
+http://dmi.uni-bayreuth.de/
+
+Authors
+---
+Alfred Wassermann <alfred.wassermann@uni-bayreuth.de>
+Michael Gerhaeuser <michael.gerhaeuser@gmail.com>
+Matthias Ehmann
+Carsten Miller
+Only Huffman codes are decoded in gunzip.
+The code is based on the source code for gunzip.c by Pasi Ojala
+@see http://www.cs.tut.fi/~albert/Dev/gunzip/gunzip.c
+@see http://www.cs.tut.fi/~albert
+Max Ziebell <mail@maxziebell.de>
+
+-------
+
+For all other files in this repository the following license applies:
+
 MIT License
 
 Copyright (c) 2021 Max Ziebell
@@ -19,3 +66,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+
+
+
