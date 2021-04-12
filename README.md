@@ -6,7 +6,7 @@ Project aimed at different ways to reduce the file footprint and apply optimizat
 
 
 Run code that was zipped and base 64 encoded.
-This does a `alerts('Hello World');`:
+This example is `alert('Hello World');`:
 ```javascript
 HypeCompressor.run("eNpLzEktKlE1slA1MipPLFY1MshILUoFclSNLFWNnQCNKQha");
 ```
