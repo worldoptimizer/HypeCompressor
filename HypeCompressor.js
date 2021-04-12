@@ -1,9 +1,9 @@
 /*!
-Hype Compressor v1.0.3, https://github.com/worldoptimizer/HypeCompressor/blob/main/LICENSE
+Hype Compressor v1.0.4, https://github.com/worldoptimizer/HypeCompressor/blob/main/LICENSE
 */
 
 /*
- Hype Compressor v1.0.3, copyright (c) 2019-2021 Max Ziebell, (https://maxziebell.de).
+ Hype Compressor, copyright (c) 2019-2021 Max Ziebell, (https://maxziebell.de).
  HypeCompressor is modified by Max Ziebell for usage with Tumult Hype 4, heavily based on JSX.Util.Unzip 
  by Matthias Ehmann, Michael Gerhaeuser, Carsten Miller, Bianca Valentin, Alfred Wassermann, Peter Wilfahrt, Pasi Ojala
  HypeCompressor is dual licensed under the Apache License Version 2.0, or LGPL Version 3 licenses.
@@ -15,6 +15,7 @@ Hype Compressor v1.0.3, https://github.com/worldoptimizer/HypeCompressor/blob/ma
 * 1.0.1 Remove module code and simplified code
 * 1.0.2 Removed directory code as we only unzip strings
 * 1.0.3 Added execute that runs decompressed string as Function
+* 1.0.4 Added file recurssion back, added new API
 */
 if("HypeCompressor" in window === false) window['HypeCompressor'] = (function () {
 
@@ -571,16 +572,16 @@ if("HypeCompressor" in window === false) window['HypeCompressor'] = (function ()
 				//GZIP
 				if (tmp[0] === 0x78 && tmp[1] === 0xda) {
 					deflateLoop();
-					unzipped[files] =  [outputArr.join('')];// [outputArr.join(''), ''];
+					unzipped[files] =  [outputArr.join(''), ''];//[outputArr.join('')];
 					files++;
 				}
 
 				//GZIP
-				// if (tmp[0] === 0x1f && tmp[1] === 0x8b) {
-				// 	skipdir();
-				// 	unzipped[files] = [outputArr.join('')]; //[outputArr.join(''), 'file'];
-				// 	files++;
-				// }
+				if (tmp[0] === 0x1f && tmp[1] === 0x8b) {
+					skipdir();
+					unzipped[files] = [outputArr.join(''), 'file'];//[outputArr.join('')];
+					files++;
+				}
 
 				//ZIP
 				if (tmp[0] === 0x50 && tmp[1] === 0x4b) {
@@ -656,11 +657,11 @@ if("HypeCompressor" in window === false) window['HypeCompressor'] = (function ()
 							files++;
 						}
 
-						// if (skipdir()) {
-						// 	// We are beyond the files' data in the zip archive.
-						// 	// Let's get out immediately...
-						// 	return false;
-						// }
+						if (skipdir()) {
+							// We are beyond the files' data in the zip archive.
+							// Let's get out immediately...
+							return false;
+						}
 					}
 					return true;
 				}
@@ -680,146 +681,146 @@ if("HypeCompressor" in window === false) window['HypeCompressor'] = (function ()
 		 *
 		 * @private
 		 */
-		// function skipdir() {
-		// 	var crc, compSize, size, os, i, c,
-		// 		tmp = [];
+		function skipdir() {
+			var crc, compSize, size, os, i, c,
+				tmp = [];
 
-		// 	if ((gpflags & 8)) {
+			if ((gpflags & 8)) {
 
-		// 		tmp[0] = readByte();
-		// 		tmp[1] = readByte();
-		// 		tmp[2] = readByte();
-		// 		tmp[3] = readByte();
+				tmp[0] = readByte();
+				tmp[1] = readByte();
+				tmp[2] = readByte();
+				tmp[3] = readByte();
 
-		// 		// signature for data descriptor record: 0x08074b50
-		// 		// 12 bytes:
-		// 		//  crc 4 bytes
-		// 		//  compressed size 4 bytes
-		// 		// uncompressed size 4 bytes
-		// 		if (tmp[0] === 0x50 &&
-		// 				tmp[1] === 0x4b &&
-		// 				tmp[2] === 0x07 &&
-		// 				tmp[3] === 0x08) {
-		// 			crc = readByte();
-		// 			crc |= (readByte() << 8);
-		// 			crc |= (readByte() << 16);
-		// 			crc |= (readByte() << 24);
-		// 		} else {
-		// 			crc = tmp[0] | (tmp[1] << 8) | (tmp[2] << 16) | (tmp[3] << 24);
-		// 		}
+				// signature for data descriptor record: 0x08074b50
+				// 12 bytes:
+				//  crc 4 bytes
+				//  compressed size 4 bytes
+				// uncompressed size 4 bytes
+				if (tmp[0] === 0x50 &&
+						tmp[1] === 0x4b &&
+						tmp[2] === 0x07 &&
+						tmp[3] === 0x08) {
+					crc = readByte();
+					crc |= (readByte() << 8);
+					crc |= (readByte() << 16);
+					crc |= (readByte() << 24);
+				} else {
+					crc = tmp[0] | (tmp[1] << 8) | (tmp[2] << 16) | (tmp[3] << 24);
+				}
 
-		// 		compSize = readByte();
-		// 		compSize |= (readByte() << 8);
-		// 		compSize |= (readByte() << 16);
-		// 		compSize |= (readByte() << 24);
+				compSize = readByte();
+				compSize |= (readByte() << 8);
+				compSize |= (readByte() << 16);
+				compSize |= (readByte() << 24);
 
-		// 		size = readByte();
-		// 		size |= (readByte() << 8);
-		// 		size |= (readByte() << 16);
-		// 		size |= (readByte() << 24);
-		// 	}
+				size = readByte();
+				size |= (readByte() << 8);
+				size |= (readByte() << 16);
+				size |= (readByte() << 24);
+			}
 
-		// 	if (modeZIP) {
-		// 		if (nextFile()) {
-		// 			// A file has been decompressed, we have to proceed
-		// 			return false;
-		// 		}
-		// 	}
+			if (modeZIP) {
+				if (nextFile()) {
+					// A file has been decompressed, we have to proceed
+					return false;
+				}
+			}
 
-		// 	tmp[0] = readByte();
-		// 	if (tmp[0] !== 8) {
-		// 		// It seems, we are beyond the files' data in the zip archive.
-		// 		// We'll skip the rest..
-		// 		return true;
-		// 	}
+			tmp[0] = readByte();
+			if (tmp[0] !== 8) {
+				// It seems, we are beyond the files' data in the zip archive.
+				// We'll skip the rest..
+				return true;
+			}
 
-		// 	// There is another file in the zip file. We proceed...
-		// 	gpflags = readByte();
+			// There is another file in the zip file. We proceed...
+			gpflags = readByte();
 
-		// 	readByte();
-		// 	readByte();
-		// 	readByte();
-		// 	readByte();
+			readByte();
+			readByte();
+			readByte();
+			readByte();
 
-		// 	readByte();
-		// 	os = readByte();
+			readByte();
+			os = readByte();
 
-		// 	if ((gpflags & 4)) {
-		// 		tmp[0] = readByte();
-		// 		tmp[2] = readByte();
-		// 		len = tmp[0] + 256 * tmp[1];
-		// 		for (i = 0; i < len; i++) {
-		// 			readByte();
-		// 		}
-		// 	}
+			if ((gpflags & 4)) {
+				tmp[0] = readByte();
+				tmp[2] = readByte();
+				len = tmp[0] + 256 * tmp[1];
+				for (i = 0; i < len; i++) {
+					readByte();
+				}
+			}
 
-		// 	if ((gpflags & 8)) {
-		// 		i = 0;
-		// 		nameBuf = [];
+			if ((gpflags & 8)) {
+				i = 0;
+				nameBuf = [];
 
-		// 		c = readByte();
-		// 		while (c) {
-		// 			if (c === '7' || c === ':') {
-		// 				i = 0;
-		// 			}
+				c = readByte();
+				while (c) {
+					if (c === '7' || c === ':') {
+						i = 0;
+					}
 
-		// 			if (i < NAMEMAX - 1) {
-		// 				nameBuf[i++] = c;
-		// 			}
+					if (i < NAMEMAX - 1) {
+						nameBuf[i++] = c;
+					}
 
-		// 			c = readByte();
-		// 		}
-		// 	}
+					c = readByte();
+				}
+			}
 
-		// 	if ((gpflags & 16)) {
-		// 		c = readByte();
-		// 		while (c) {
-		// 			c = readByte();
-		// 		}
-		// 	}
+			if ((gpflags & 16)) {
+				c = readByte();
+				while (c) {
+					c = readByte();
+				}
+			}
 
-		// 	if ((gpflags & 2)) {
-		// 		readByte();
-		// 		readByte();
-		// 	}
+			if ((gpflags & 2)) {
+				readByte();
+				readByte();
+			}
 
-		// 	deflateLoop();
+			deflateLoop();
 
-		// 	crc = readByte();
-		// 	crc |= (readByte() << 8);
-		// 	crc |= (readByte() << 16);
-		// 	crc |= (readByte() << 24);
+			crc = readByte();
+			crc |= (readByte() << 8);
+			crc |= (readByte() << 16);
+			crc |= (readByte() << 24);
 
-		// 	size = readByte();
-		// 	size |= (readByte() << 8);
-		// 	size |= (readByte() << 16);
-		// 	size |= (readByte() << 24);
+			size = readByte();
+			size |= (readByte() << 8);
+			size |= (readByte() << 16);
+			size |= (readByte() << 24);
 
-		// 	if (modeZIP) {
-		// 		if (nextFile()) {
-		// 			// A file has been decompressed, we have to proceed
-		// 			return false;
-		// 		}
-		// 	}
+			if (modeZIP) {
+				if (nextFile()) {
+					// A file has been decompressed, we have to proceed
+					return false;
+				}
+			}
 
-		// 	// We are here in non-ZIP-files only,
-		// 	// In that case the eturn value doesn't matter
-		// 	return false;
-		// }
+			// We are here in non-ZIP-files only,
+			// In that case the eturn value doesn't matter
+			return false;
+		}
 
-		// JXG.Util.Unzip.prototype.unzipFile = function (name) {
-		//     var i;
-
-		//     this.unzip();
-
-		//     for (i = 0; i < unzipped.length; i++) {
-		//         if (unzipped[i][1] === name) {
-		//             return unzipped[i][0];
-		//         }
-		//     }
-
-		//     return '';
-		// };
+// 		Util.Unzip.prototype.unzipFile = function (name) {
+// 		    var i;
+// 
+// 		    this.unzip();
+// 
+// 		    for (i = 0; i < unzipped.length; i++) {
+// 		        if (unzipped[i][1] === name) {
+// 		            return unzipped[i][0];
+// 		        }
+// 		    }
+// 
+// 		    return '';
+// 		};
 
 		Util.Unzip.prototype.unzip = function () {
 			nextFile();
@@ -827,34 +828,110 @@ if("HypeCompressor" in window === false) window['HypeCompressor'] = (function ()
 		};
 	};
 
-    var decode = function(e){
-		return atob(e);
+	var decompressBinary = function(e) {
+		return new Util.Unzip(e).unzip().sort(function(a, b) {
+  			return b[1].endsWith('_hype_generated_script.js')? -1:0;
+		});
     }
 
-
-	var decompress = function(e) {
-		return unescape(new Util.Unzip(decodeAsArray(e)).unzip()[0][0])
+	var decompressEncoded = function(e) {
+		var files = decompressBinary(arrayFromString(atob(e))), len = files.length;
+		for (var i = 0; i < len; i++) {
+			files[i]=[unescape(files[i][0]), files[i][1]?files[i][1]: ''];
+		}
+		return files;
+    }
+    
+    var arrayFromString = function(str){
+	    var i, t = [], len = str.length;
+		for (i = 0; i < len; i++) t[i] = str.charCodeAt(i);
+		return t;
     }
 
-	var decodeAsArray = function(e) {
-		var r, n = decode(e),
-			t = [],
-			o = n.length;
-		for (r = 0; r < o; r++) t[r] = n.charCodeAt(r);
-		return t
+    var decompress = function(e){
+		switch (e.constructor) {
+			case String: e = decompressEncoded(e); break;
+			case Uint8Array: e = decompressBinary(e); break;
+		}
+		return e;
+    }
+
+   	var runStrict = function(files, query, prepend, append){
+   		return run(files, query, '"use strict";'+prepend, append);
+   	}
+
+	var run = function(files, options){
+		if (!files) return;
+		if (!options) options = {};
+
+		files = decompress(files);
+		
+		//default function if not set
+		var query = options.query || function(name){
+			if (name.split('/').pop().substr(0, 1)=='.') return false;
+			return name=='' || name.endsWith('.js');
+		}
+
+		//handle query
+		switch (query.constructor) {
+			case Function:
+				for(var i=0; i<files.length; i++){
+					if (query(files[i][1], files[i][0])) exec(files[i][0], options);
+				}
+				break;
+
+			case String: 
+				for(var i=0; i<files.length; i++){
+					if (files[i][1]==query) return exec(files[i][0], options);
+				}
+				break;
+
+			case Number: 
+				return exec(files[query][0], options); 
+				break;
+		}
 	}
 
-	var run = function(code){
-		//Evaluate: https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Function
-		//TEST 'use strict";return['+decompress(code)+']'
-		new Function(decompress(code))();
+	var exec = function (code, options){
+		var prepend = options.prepend? options.prepend : '';
+		var append = options.append? options.append : '';
+		return new Function(prepend+code+append)();
+	}
+	
+	var loadBinary = function(url, callback, error) {
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", url, true);
+		xhr.responseType = "arraybuffer";
+		xhr.onload = function (event) {
+			if (xhr.status >= 200 && xhr.status < 300) {
+				if (xhr.response) {
+					callback(new Uint8Array(xhr.response), event);	
+				}
+			} else {
+				if (error) error(event);
+			}
+		};
+		xhr.onerror = function(event) {
+			if (error) error(event);
+		}
+		xhr.send(null);
+	}
+
+	var load = function(url, callback, error){
+		loadBinary(url, function(byteArray){
+			callback(decompressBinary(byteArray));
+		}, error);
 	}
 
 	/* Reveal Public interface to window['HypeCompressor'] */
 	return {
-		version: '1.0.3',
+		version: '1.0.4',
+		/* simple */
 		'decompress': decompress,
-		'run' : run,
+		'load': load,
+		'run': run,
+		/* expert */
+		'loadBinary': loadBinary,
+		'runStrict': runStrict, 
 	};
 })();
-
