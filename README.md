@@ -49,5 +49,5 @@ if("HYPE_eventListeners" in window === false) { window.HYPE_eventListeners = Arr
 window.HYPE_eventListeners.push({"type":"HypeResourceLoad", "callback":HypeResourceLoad});
 ```
 
-
+Loading using the `HypeCompressor.load` method relies on `XMLHttpRequest`. Meaning to use it you can't run from `file://` as that violates Cross-Origin Resource Sharing (CORS) policies.
 
