@@ -32,7 +32,7 @@ base64.b64encode(zlib.compress(urllib.quote(code), 6))
 ---
 
 
-You can also load full zip files and run all JS included in it.
+You can also load manually created zip files and run all JS included in it.
 Hype generated script files are always sorted to the end.
 ```javascript
 HypeCompressor.load("${resourcesFolderName}/myJavaScriptLibraries.zip",function(files){
