@@ -11,6 +11,28 @@ This example is `alert('Hello World');`:
 HypeCompressor.run("eNpLzEktKlE1slA1MipPLFY1MshILUoFclSNLFWNnQCNKQha");
 ```
 
+To generate base 64 encoded zipped content use the following:
+Compression can vary from 1-9. Using 6 (as SWF did in the old days) in these snippets.
+
+**PHP example** with `$code` being your code.
+```php
+base64_encode(gzcompress(rawurlencode($code),6))
+```
+
+**Python example** with `code` being your code.
+```python
+import sys
+import os
+import urllib
+import base64
+import zlib
+
+base64.b64encode(zlib.compress(urllib.quote(code), 6))
+```
+
+---
+
+
 You can also load full zip files and run all JS included in it.
 Hype generated script files are always sorted to the end.
 ```javascript
