@@ -21,8 +21,6 @@ base64_encode(gzcompress(rawurlencode($code),6))
 
 **Python example** with `code` being your code.
 ```python
-import sys
-import os
 import urllib
 import base64
 import zlib
