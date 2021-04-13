@@ -1,5 +1,5 @@
 /*!
-Hype Compressor v1.0.5, https://github.com/worldoptimizer/HypeCompressor/blob/main/LICENSE
+Hype Compressor v1.0.6, https://github.com/worldoptimizer/HypeCompressor/blob/main/LICENSE
 */
 
 /*
@@ -17,6 +17,7 @@ Hype Compressor v1.0.5, https://github.com/worldoptimizer/HypeCompressor/blob/ma
 * 1.0.3 Added execute that runs decompressed string as Function
 * 1.0.4 Added file recurssion back, added new API
 * 1.0.5 Replaced bitReverse with generator instead of hard coded values
+* 1.0.6 Fixed a small typo error breaking 1.0.5
 */
 if("HypeCompressor" in window === false) window['HypeCompressor'] = (function () {
 
@@ -904,7 +905,7 @@ if("HypeCompressor" in window === false) window['HypeCompressor'] = (function ()
 
 	/* Reveal Public interface to window['HypeCompressor'] */
 	return {
-		version: '1.0.5',
+		version: '1.0.6',
 		/* simple */
 		'decompress': decompress,
 		'load': load,
