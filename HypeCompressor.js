@@ -1,8 +1,3 @@
-// ==ClosureCompiler==
-// @output_file_name default.js
-// @compilation_level SIMPLE_OPTIMIZATIONS
-// ==/ClosureCompiler==
-
 /*!
 Hype Compressor v1.0.5, https://github.com/worldoptimizer/HypeCompressor/blob/main/LICENSE
 */
