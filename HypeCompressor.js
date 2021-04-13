@@ -23,8 +23,6 @@ if("HypeCompressor" in window === false) window['HypeCompressor'] = (function ()
 	"use strict";
 
 	// Zip routine constants
-	
-
 	var bitReverse = function() {
 		var lookup=[];
 		for(var n=0; n<256; n++) {
