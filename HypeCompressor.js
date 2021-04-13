@@ -32,11 +32,10 @@ if("HypeCompressor" in window === false) window['HypeCompressor'] = (function ()
 
 	var bitReverse = function() {
 		var lookup=[];
-		for(var n=0; n<256; n++){
+		for(var n=0; n<256; n++) {
 			var num = n;
 			var result = 0;
-			for (var i = 0; i < 8; i++) 
-		    {
+			for (var i = 0; i < 8; i++) {
 				result = result * 2 + (num % 2);
 				num = Math.floor(num / 2);
 			}
