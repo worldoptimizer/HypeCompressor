@@ -32,7 +32,7 @@ if("HypeCompressor" in window === false) window['HypeCompressor'] = (function ()
 				result = result * 2 + (num % 2);
 				num = Math.floor(num / 2);
 			}
-			lookup[n](result);
+			lookup[n] = result;
 		}
 		return lookup;
 	}(),
