@@ -2,7 +2,6 @@
 
 // This helper is based on and extends 
 // https://github.com/worldoptimizer/HypeDocumentLoader-for-PHP
-<?php
 require_once ("HypeDocumentLoader.php");
  
 class HypeCompressor extends HypeDocumentLoader{
