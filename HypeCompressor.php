@@ -2,28 +2,21 @@
 
 // This helper is based on and extends 
 // https://github.com/worldoptimizer/HypeDocumentLoader-for-PHP
+<?php
 require_once ("HypeDocumentLoader.php");
  
 class HypeCompressor extends HypeDocumentLoader{
-	var $loader_object;
-	var $string_lookup = [];
-	var $string_lookup_count = [];
-	var	$scene_objects_lookup = [];
-	
-	public function get_string_lookup() {
-		return $this->string_lookup;
-	}
-
-	public function get_scene_objects_lookup() {
-		return $this->$scene_objects_lookup;
-	}
+	public $loader_object;
+	public $string_lookup = [];
+	public $string_lookup_count = [];
+	public $scene_objects_lookup = [];
+	public $scene_objects_encoded_lookup = [];
+	public $hype_functions;
+	public $hype_functions_minified;
+	public $hype_functions_lookup=[];
 
 	public function compress($string) {
 		return base64_encode(gzcompress(rawurlencode($string),9));
-	}
-
-	public function load_document_data_from_generated_script(){
-		$this->loader_object = $this->get_loader_object();
 	}
 
 	private function sort_based_on_count($a, $b) {
@@ -36,7 +29,7 @@ class HypeCompressor extends HypeDocumentLoader{
 	}
 
 	public function compress_strings_in_document_data(){
-		if(empty($this->loader_object)) $this->load_document_data_from_generated_script();
+		if(empty($this->loader_object)) $this->loader_object = $this->get_loader_object();
 
 		$iterator = new RecursiveIteratorIterator(new RecursiveArrayIterator($this->loader_object));
 		foreach($iterator as $key => $value) {
@@ -81,19 +74,21 @@ class HypeCompressor extends HypeDocumentLoader{
 			}
 		}
 
-		$this->inject_code_before_init('var _='.$this->encode($this->string_lookup).';');
+		$this->insert_into_document_loader('var _='.$this->encode($this->string_lookup).';');
 	}
 
 	public function compress_scene_objects(){
-		if(empty($this->loader_object)) $this->load_document_data_from_generated_script();
+		if(empty($this->loader_object)) $this->loader_object = $this->get_loader_object();
 
-		$scene_objects_signature_lookup = [];
 		// loop over scenes
 		for ($i = 0; $i < count($this->loader_object->scenes); $i++) {
 			// loop over objects (ids)
 			for ($j = 0; $j < count($this->loader_object->scenes[$i]->O); $j++) {
 				// lookup id
 				$id = $this->loader_object->scenes[$i]->O[$j];
+
+				//make we have something
+				if (empty($this->loader_object->scenes[$i]->v->{$id})) continue;
 
 				// create object we might assign and fetch props
 				$temp_object = (object)[];
@@ -127,11 +122,11 @@ class HypeCompressor extends HypeDocumentLoader{
 				$encoded = $this->encode($this->loader_object->scenes[$i]->v->{$id});
 
 				//check if in lookup based on signature
-				$fid = array_search($encoded, $scene_objects_signature_lookup);
+				$fid = array_search($encoded, $this->scene_objects_encoded_lookup);
 				if($fid===false) {
 					//new and create
 					$this->scene_objects_lookup[] = $this->loader_object->scenes[$i]->v->{$id};
-					$scene_objects_signature_lookup[] = $encoded;
+					$this->scene_objects_encoded_lookup[] = $encoded;
 					$fid = count($this->scene_objects_lookup)-1;
 				}
 
@@ -140,9 +135,46 @@ class HypeCompressor extends HypeDocumentLoader{
 			}
 		}
 
-		$this->inject_code_before_init('var sym='.$this->encode($this->scene_objects_lookup).';');
-		$this->inject_code_before_init('function $(c,a){var b=JSON.parse(JSON.stringify(sym[c]));if(a&&!(a instanceof Object))a={bF:a};Object.assign(b,a);return b}');
+		$this->insert_into_document_loader('var sym='.$this->encode($this->scene_objects_lookup).';');
+		$this->insert_into_document_loader('function $(c,a){var b=JSON.parse(JSON.stringify(sym[c]));if(a&&!(a instanceof Object))a={bF:a};Object.assign(b,a);return b}');
 
+	}
+
+	public function populate_hype_functions ($match) {
+		print_r($match);
+		$this->hype_functions_lookup[stripcslashes($match[1])] = stripcslashes($match[2]);
+		$new_name = 'HYPE_functions[\\"'.$this->document_name.'\\"].'.$match[1];
+		return 'name:"'.$match[1].'",source:"'.$new_name.'",identifier:"'.$match[3].'"';
+	}
+
+	public function extract_functions_to_window_scope($minify=false){
+		$loader_begin_string = $this->hype_generated_script_parts->loader_begin_string;
+		$this->hype_functions ='';
+		$this->hype_functions .= "\n".'if ("HYPE_functions" in window === false) window.HYPE_functions = {};';
+		$this->hype_functions .= "\n".'HYPE_functions["'.$this->document_name.'"] = {';
+		
+		$loader_begin_string = preg_replace_callback(
+			'|name:"(.*?)",source:"(.*?)",identifier:"([0-9]+)"|',
+			array($this, "populate_hype_functions"),
+			$loader_begin_string
+		);
+		
+		foreach($this->hype_functions_lookup as $name => $function){
+			$this->hype_functions .= $name.':'.$function.',';
+		}
+		
+		$this->hype_functions .= "\n".'};';
+
+		if($minify){
+			$this->hype_functions_minified = $this->minify_with_closure_compiler($this->hype_functions);
+			if ($this->hype_functions_minified){
+				$this->insert_into_generated_script($this->hype_functions_minified);
+			}
+		} else {
+			$this->insert_into_generated_script($this->hype_functions);
+		}
+
+		$this->hype_generated_script_parts->loader_begin_string = $loader_begin_string;
 	}
 
 	public function RFC2045($string, $append='', $prepend=''){
@@ -203,5 +235,6 @@ class HypeCompressor extends HypeDocumentLoader{
 
 		// return minified
 		return ($jscomp);
-	}	
+	}
+	
 }
