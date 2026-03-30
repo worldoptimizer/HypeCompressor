@@ -17,16 +17,15 @@ To generate base 64 encoded zipped content use the following:
 
 **PHP example** with `$code` being your code.
 ```php
-base64_encode(gzcompress(rawurlencode($code),6))
+base64_encode(gzcompress($code, 6))
 ```
 
 **Python example** with `code` being your code.
 ```python
-import urllib
 import base64
 import zlib
 
-base64.b64encode(zlib.compress(urllib.quote(code), 6))
+base64.b64encode(zlib.compress(code.encode('utf-8'), 6))
 ```
 
 ---
